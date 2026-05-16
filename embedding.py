@@ -1,24 +1,27 @@
 import numpy as np
 import pickle
 
-personality1 = np.array([0.1, 0.2, 0.3, 0.45, 0.5])
-personality2 = np.array([0.2, 0.3, 0.4, 0.5, 0.6])
-personality3 = np.array([0.10, 0.90, 0.10, 0.60, 0.40])
+# personality1 = np.array([0.1, 0.2, 0.3, 0.45, 0.5])
+# personality2 = np.array([0.2, 0.3, 0.4, 0.5, 0.6])
+# personality3 = np.array([0.10, 0.90, 0.10, 0.60, 0.40])
 
 
 def dot_product(vec1, vec2):
     return np.dot(vec1, vec2)
 
-print(f" Dot Product of per1 * per2: {dot_product(personality1, personality2):.02f}")
-print(f" Dot Product of per1 * per3: {dot_product(personality1, personality3):.02f}")
-print(f" Dot Product of per2 * per3: {dot_product(personality2, personality3):.02f}")
+# print(f" Dot Product of per1 * per2: {dot_product(personality1, personality2):.02f}")
+# print(f" Dot Product of per1 * per3: {dot_product(personality1, personality3):.02f}")
+# print(f" Dot Product of per2 * per3: {dot_product(personality2, personality3):.02f}")
 
 # Problem: a longer vector always has a higher dot product even if it's not actually more similar. So we normalize.
 
 # Now using normalisation:
 
 def normalize(vec):
-    return vec/np.linalg.norm(vec)
+    norm = np.linalg.norm(vec)
+    if norm == 0: 
+        return vec  # Returns the original zero vector safely
+    return vec / norm
 
 # now using it again
 
@@ -26,9 +29,9 @@ def normalised_dot_product(vec1, vec2):
     return np.dot(normalize(vec1), normalize(vec2))
 
 
-print(f" Normalised Dot Product of per1 * per2: {normalised_dot_product(personality1, personality2):.02f}")
-print(f" Normalised Dot Product of per1 * per3: {normalised_dot_product(personality1, personality3):.02f}")
-print(f" Normalised Dot Product of per2 * per3: {normalised_dot_product(personality2, personality3):.02f}")
+# print(f" Normalised Dot Product of per1 * per2: {normalised_dot_product(personality1, personality2):.02f}")
+# print(f" Normalised Dot Product of per1 * per3: {normalised_dot_product(personality1, personality3):.02f}")
+# print(f" Normalised Dot Product of per2 * per3: {normalised_dot_product(personality2, personality3):.02f}")
 
 # Now thinking of Building a vector embedding model, rn using Tf-IDf
 
