@@ -16,22 +16,25 @@ VecLens takes a user's text description of their preferences and recommends the 
 VecLens/
 ├── data/
 │   ├── index.txt              # list of all catalog item names
-│   ├── openness.txt           # description for each personality / item
-│   ├── conscientiousness.txt
-│   ├── extraversion.txt
-│   ├── agreeableness.txt
-│   └── neuroticism.txt
+│   ├── Agreeableness.txt      # description for each personality
+│   ├── Conscientiousness.txt
+│   ├── Extraversion.txt
+│   ├── Neuroticism.txt
+│   ├── Openness.txt
+│   ├── personalities.pkl      # saved catalog titles
+│   ├── tfidf_matrix.npy       # saved embedding matrix
+│   └── vectorizer.pkl         # saved fitted vectorizer (vocab + IDF weights)
+│
+├── visualisation/
+│   ├── titles_2d_space.png    # PCA projection of catalog items
+│   ├── vocab_2d_space.png     # PCA projection of vocabulary words
+│   └── vocab_idf.png          # word rarity bar chart
 │
 ├── embedding.py               # TFIDFVectorizer class (custom, built from scratch)
 ├── building_embd.py           # fits vectorizer on catalog, saves matrix + vectorizer
 ├── VecLens.py                 # user-facing recommendation script
-├── visualize.py               # recommendation scores + heatmap visualization
 ├── plot.py                    # vocabulary explorer + 2D PCA space plots
-│
-├── tfidf_matrix.npy           # saved embedding matrix
-├── vectorizer.pkl             # saved fitted vectorizer (vocab + IDF weights)
-├── personalities.pkl          # saved catalog titles
-│
+├── README.md
 └── requirements.txt
 ```
 
