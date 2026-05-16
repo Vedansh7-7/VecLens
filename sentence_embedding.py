@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 
 personality1 = np.array([0.1, 0.2, 0.3, 0.45, 0.5])
 personality2 = np.array([0.2, 0.3, 0.4, 0.5, 0.6])
@@ -39,44 +40,114 @@ personalities = ['Neuroticism',
                  'Agreeableness',
                  'Conscientiousness']
 
-Traits = ['Research links high levels of neuroticism with an increased risk of certain mental health issues. If you’re highly neurotic—meaning you tend to experience a lot of negative feelings like fear, depression, and anger—you’re more likely to feel overwhelmed by stressful situations. While another person might take a parking ticket in their stride, for example, you may see it as a catastrophe that ruins your day. You’re also more likely to belittle yourself for minor mistakes that other people simply shrug off.',
-          'Approaching the world with an openness to new experiences can be seen as a positive personality trait, unless that openness crosses over into excessive risk-taking. Acquiring knowledge, meeting new people, and trying out new hobbies are also great ways to keep your brain active and maintain healthy cognitive functioning as you age.',
-          'Being a social butterfly can come with many benefits. If you’re an extravert, you likely have higher self-esteem, find it easier to adapt to life’s changes, and enjoy a greater overall sense of well-being. Part of this may be because extraverts often have more social support and are more likely to seek help from others.',
-          'As with extraversion, people with high agreeableness tend to enjoy a greater sense of social well-being. If you’re agreeable, friends may gravitate toward your generous and trusting personality. Those very friends form a social support network that helps you navigate life’s challenges and better cope with stress.',
-          'The more conscientious you are, the more likely you are to take a responsible approach to life. This can have implications for mental and physical health, as well as overall success. You’re more likely to take your physical health seriously, by regularly exercising and seeing your doctor. And you’re likely a diligent employee or student, with an achievement-oriented mindset.',
+Traits = ['neuroticism tend to experience a lot of negative feelings like fear, depression, and ange you’re more likely to feel overwhelmed by stressful situations. You’re also more likely to belittle yourself for minor mistakes that other people simply shrug off.',
+          'Approaching the world with an openness to new experiences can be seen as a positive personality trait acquiring knowledge, meeting new people, and trying out new hobbies are all people with high openness are more curious and look for novel experiences.',
+          'Being a social butterfly can come with many benefits. If you’re an extravert, you likely have self-esteem, find it easier to adapt to life’s changes, and enjoy a greater overall sense of well-being. Part of this may be because extraverts often have more social support and are more likely to seek help from others. people are outgoing, assertive, and expressive.',
+          'people with high agreeableness tend to enjoy a greater sense of social well-being. If you’re agreeable, friends may gravitate toward your generous and trusting personality. Those very friends form a social support network that helps you navigate life’s challenges and better cope with stress. are highly agreeable are altruistic, trusting, and cooperative.',
+          'The conscientious take a responsible approach to life. This can have implications for mental and physical health, as well as overall success. You’re more likely to take your physical health seriously, by regularly exercising and seeing your doctor. And you’re likely a diligent employee or student, with an achievement-oriented mindset. people are more organized, self-controlled, and focused on goals.',
           ]             # Source: https://www.helpguide.org/mental-health/psychology/personality-types-traits-and-how-it-affects-mental-health
 
-vocab = sorted(set(" ".join(Traits).split()))
-print(vocab)
-N = len(Traits)
+# vocab = sorted(set(" ".join(Traits).split()))
+# # print(vocab)
+# N = len(Traits)
 
-# Defining word frequencies in each document
-def tf(word, doc):
-    words = doc.split()
-    return words.count(word) / len(words)
+# # Defining word frequencies in each document
+# def tf(word, doc):
+#     words = doc.split()
+#     return words.count(word) / len(words)
 
-# Defining the frequnecies of a word in vocab
+# # Defining the frequnecies of a word in vocab
 
-def idf(word, docs):
-    containing_N = 0
-    for i in range(N):
-        if word in docs[i].split():
-            containing_N += 1
-    idf_of_word = np.log( N / containing_N)
-    return idf_of_word
+# def idf(word, docs):
+#     containing_N = 0
+#     for i in range(N):
+#         if word in docs[i].split():
+#             containing_N += 1
+#     idf_of_word = np.log( N / containing_N)
+#     return idf_of_word
 
-def tfidf(word, doc, docs):
-    return tf(word, doc) * idf(word, docs)
+# def tfidf(word, doc, docs):
+#     return tf(word, doc) * idf(word, docs)
 
-matrix = []
+# matrix = []
 
-for trait in Traits:
-    # print(trait)
-    row = [tfidf(word, trait, Traits) for word in vocab]
-    matrix.append(row)
-
-
-matrix = np.array(matrix)
-print(matrix.shape)
+# for trait in Traits:
+#     # print(trait)
+#     row = [tfidf(word, trait, Traits) for word in vocab]
+#     matrix.append(row)
 
 
+# matrix = np.array(matrix)
+# # print(matrix.shape)
+
+# # print(matrix)
+
+
+import numpy as np
+import pickle
+
+class TFIDFVectorizer:
+    def __init__(self):
+        self.vocabulary = {}
+        self.idf_values = {}
+        self.fitted = False
+
+    def fit(self, documents):
+        
+        all_words = set()
+        for doc in documents:
+            for word in doc.split():
+                all_words.add(word)
+        
+        # assign each word a fixed dimension index
+        self.vocabulary = {word: idx for idx, word in enumerate(sorted(all_words))}
+        
+        # compute IDF for each word......
+        N = len(documents)
+        for word in self.vocabulary:
+            containing = sum(1 for doc in documents if word in doc.split())
+            self.idf_values[word] = np.log(N / containing)
+        
+        self.fitted = True
+        return self
+
+    def transform(self, documents):
+        if not self.fitted:
+            raise Exception("Fit the vectorizer first before transforming.")
+        
+        matrix = []
+        for doc in documents:
+            words = doc.split()
+            row = np.zeros(len(self.vocabulary))
+            
+            for word in words:
+                if word not in self.vocabulary:
+                    continue          # unknown word ko ignore, dimension doesn't exist
+                
+                tf  = words.count(word) / len(words)
+                idf = self.idf_values[word]
+                dim = self.vocabulary[word]
+                row[dim] = tf * idf
+            
+            matrix.append(row)
+        
+        return np.array(matrix)
+
+    def fit_transform(self, documents):
+        self.fit(documents)
+        return self.transform(documents)
+
+    def get_feature_names(self):
+        # return words ordered by their dimension index
+        return sorted(self.vocabulary, key=self.vocabulary.get)
+
+    def save(self, path="vectorizer.pkl"):
+        with open(path, "wb") as f:
+            pickle.dump(self, f)
+        print(f"Saved to {path}")
+
+    @staticmethod
+    def load(path="vectorizer.pkl"):
+        with open(path, "rb") as f:
+            return pickle.load(f)
+        
