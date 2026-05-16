@@ -48,7 +48,7 @@ Traits = ['neuroticism tend to experience a lot of negative feelings like fear, 
           'Being a social butterfly can come with many benefits. If you’re an extravert, you likely have self-esteem, find it easier to adapt to life’s changes, and enjoy a greater overall sense of well-being. Part of this may be because extraverts often have more social support and are more likely to seek help from others. people are outgoing, assertive, and expressive.',
           'people with high agreeableness tend to enjoy a greater sense of social well-being. If you’re agreeable, friends may gravitate toward your generous and trusting personality. Those very friends form a social support network that helps you navigate life’s challenges and better cope with stress. are highly agreeable are altruistic, trusting, and cooperative.',
           'The conscientious take a responsible approach to life. This can have implications for mental and physical health, as well as overall success. You’re more likely to take your physical health seriously, by regularly exercising and seeing your doctor. And you’re likely a diligent employee or student, with an achievement-oriented mindset. people are more organized, self-controlled, and focused on goals.',
-          ]             # Source: https://www.helpguide.org/mental-health/psychology/personality-types-traits-and-how-it-affects-mental-health
+          ]          # Source: https://www.helpguide.org/mental-health/psychology/personality-types-traits-and-how-it-affects-mental-health
 
 # vocab = sorted(set(" ".join(Traits).split()))
 # # print(vocab)

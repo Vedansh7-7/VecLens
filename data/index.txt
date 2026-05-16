@@ -1,0 +1,5 @@
+Neuroticism
+Openness
+Extraversion
+Agreeableness
+Conscientiousness
