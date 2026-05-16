@@ -1,6 +1,8 @@
 import numpy as np
 import pickle
 from embedding import TFIDFVectorizer, normalised_dot_product
+import gradio as gr
+
 
 BOLD_GREEN = "\033[1;32m"
 BOLD_YELLOW = "\033[1;33m"
