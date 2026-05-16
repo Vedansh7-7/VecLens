@@ -2,6 +2,10 @@ import numpy as np
 import pickle
 from embedding import TFIDFVectorizer, normalised_dot_product
 
+BOLD_GREEN = "\033[1;32m"
+BOLD_YELLOW = "\033[1;33m"
+RESET = "\033[0m"
+
 vectorizer = TFIDFVectorizer.load(r".\data\vectorizer.pkl")
 matrix     = np.load(r".\data\tfidf_matrix.npy")
 
@@ -15,7 +19,7 @@ scores = [(titles[i], normalised_dot_product(user_vector, matrix[i]))
           for i in range(len(titles))]
 scores.sort(key=lambda x: x[1], reverse=True)
 if scores[0][1] == 0:
-    print("\nInput was understood but matched nothing in the catalog.")
-    print("Try writing more.")
+    print(f"\nInput was understood but matched nothing in the catalog.")
+    print(f"{BOLD_YELLOW}Try writing more.{RESET}")
 else:
-    print(scores[:1])
+    print(f"Your character traits are more similar to - {BOLD_GREEN}{scores[:1][0][0]}{RESET}")
