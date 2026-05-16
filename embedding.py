@@ -113,13 +113,13 @@ class TFIDFVectorizer:
         # return words ordered by their dimension index
         return sorted(self.vocabulary, key=self.vocabulary.get)
 
-    def save(self, path="vectorizer.pkl"):
+    def save(self, path=r".\data\vectorizer.pkl"):
         with open(path, "wb") as f:
             pickle.dump(self, f)
         print(f"Saved to {path}")
 
     @staticmethod
-    def load(path="vectorizer.pkl"):
+    def load(path=r".\data\vectorizer.pkl"):
         with open(path, "rb") as f:
             return pickle.load(f)
         

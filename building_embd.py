@@ -30,8 +30,8 @@ matrix = vectorizer.fit_transform(descriptions)
 print(vectorizer.get_feature_names())
 print(matrix.shape)
 
-np.save("tfidf_matrix.npy", matrix)
-vectorizer.save("vectorizer.pkl")
+np.save(r".\data\tfidf_matrix.npy", matrix)
+vectorizer.save(r".\data\vectorizer.pkl")
 
-with open("personalities.pkl", "wb") as f:
+with open(r".\data\personalities.pkl", "wb") as f:
     pickle.dump(personalities, f)

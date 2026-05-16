@@ -94,12 +94,12 @@ from sklearn.decomposition import PCA
 
 # ── load ──────────────────────────────────────────────────────────────────────
 
-matrix = np.load(r"D:\Coding2\MLAI\VecLens\VecLens\tfidf_matrix.npy")
+matrix = np.load(r"D:\Coding2\MLAI\VecLens\VecLens\data\tfidf_matrix.npy")
 
-with open(r"D:\Coding2\MLAI\VecLens\VecLens\vectorizer.pkl", "rb") as f:
+with open(r"D:\Coding2\MLAI\VecLens\VecLens\data\vectorizer.pkl", "rb") as f:
     vectorizer = pickle.load(f)
 
-with open(r"D:\Coding2\MLAI\VecLens\VecLens\personalities.pkl", "rb") as f:
+with open(r"D:\Coding2\MLAI\VecLens\VecLens\data\personalities.pkl", "rb") as f:
     titles = pickle.load(f)
 
 features = np.array(vectorizer.get_feature_names())
@@ -127,7 +127,7 @@ plt.xticks(rotation=90, fontsize=8)
 plt.ylabel("IDF Score (higher = rarer)")
 plt.title("Vocabulary — word rarity across your catalog")
 plt.tight_layout()
-plt.savefig("vocab_idf.png", dpi=150)
+plt.savefig(r".\visualisation\vocab_idf.png", dpi=150)
 plt.show()
 print("Saved: vocab_idf.png")
 
@@ -170,7 +170,7 @@ else:
     ax.set_title("Vocabulary in 2D space (PCA projection)\nwarm = rare word, cool = common word")
     ax.grid(True, alpha=0.15)
     plt.tight_layout()
-    plt.savefig("vocab_2d_space.png", dpi=150)
+    plt.savefig(r".\visualisation\vocab_2d_space.png", dpi=150)
     plt.show()
     print("Saved: vocab_2d_space.png")
 
@@ -207,6 +207,6 @@ if matrix.shape[0] >= 2 and matrix.shape[1] >= 2:
     ax.set_title("Titles in 2D space (PCA projection)\ncloser = more similar vocabulary")
     ax.grid(True, alpha=0.15)
     plt.tight_layout()
-    plt.savefig("titles_2d_space.png", dpi=150)
+    plt.savefig(r".\visualisation\titles_2d_space.png", dpi=150)
     plt.show()
     print("Saved: titles_2d_space.png")
