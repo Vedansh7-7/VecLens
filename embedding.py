@@ -34,83 +34,51 @@ def normalised_dot_product(vec1, vec2):
 # print(f" Normalised Dot Product of per2 * per3: {normalised_dot_product(personality2, personality3):.02f}")
 
 # Now thinking of Building a vector embedding model, rn using Tf-IDf
-
-# Let traits be a list of descriptions of each of the traits
-
-personalities = ['Neuroticism',
-                 'Openness',
-                 'Extraversion',
-                 'Agreeableness',
-                 'Conscientiousness']
-
-Traits = ['neuroticism tend to experience a lot of negative feelings like fear, depression, and ange you’re more likely to feel overwhelmed by stressful situations. You’re also more likely to belittle yourself for minor mistakes that other people simply shrug off.',
-          'Approaching the world with an openness to new experiences can be seen as a positive personality trait acquiring knowledge, meeting new people, and trying out new hobbies are all people with high openness are more curious and look for novel experiences.',
-          'Being a social butterfly can come with many benefits. If you’re an extravert, you likely have self-esteem, find it easier to adapt to life’s changes, and enjoy a greater overall sense of well-being. Part of this may be because extraverts often have more social support and are more likely to seek help from others. people are outgoing, assertive, and expressive.',
-          'people with high agreeableness tend to enjoy a greater sense of social well-being. If you’re agreeable, friends may gravitate toward your generous and trusting personality. Those very friends form a social support network that helps you navigate life’s challenges and better cope with stress. are highly agreeable are altruistic, trusting, and cooperative.',
-          'The conscientious take a responsible approach to life. This can have implications for mental and physical health, as well as overall success. You’re more likely to take your physical health seriously, by regularly exercising and seeing your doctor. And you’re likely a diligent employee or student, with an achievement-oriented mindset. people are more organized, self-controlled, and focused on goals.',
-          ]          # Source: https://www.helpguide.org/mental-health/psychology/personality-types-traits-and-how-it-affects-mental-health
-
-# vocab = sorted(set(" ".join(Traits).split()))
-# # print(vocab)
-# N = len(Traits)
-
-# # Defining word frequencies in each document
-# def tf(word, doc):
-#     words = doc.split()
-#     return words.count(word) / len(words)
-
-# # Defining the frequnecies of a word in vocab
-
-# def idf(word, docs):
-#     containing_N = 0
-#     for i in range(N):
-#         if word in docs[i].split():
-#             containing_N += 1
-#     idf_of_word = np.log( N / containing_N)
-#     return idf_of_word
-
-# def tfidf(word, doc, docs):
-#     return tf(word, doc) * idf(word, docs)
-
-# matrix = []
-
-# for trait in Traits:
-#     # print(trait)
-#     row = [tfidf(word, trait, Traits) for word in vocab]
-#     matrix.append(row)
-
-
-# matrix = np.array(matrix)
-# # print(matrix.shape)
-
-# # print(matrix)
+STOP_WORDS = {
+    "the", "a", "an", "is", "it", "in", "on", "at", "to", "for",
+    "of", "and", "or", "but", "as", "by", "with", "this", "that",
+    "was", "are", "be", "been", "have", "has", "had", "you", "your",
+    "i", "we", "they", "he", "she", "if", "can", "may", "more",
+    "also", "all", "out", "from", "well", "very", "often", "many",
+    "like", "just", "so", "do", "its", "into", "than", "their",
+    "there", "about", "up", "what", "which", "who", "will", "would",
+    "could", "should", "not", "no", "any", "some", "our", "my",
+    "those", "these", "them", "his", "her", "come", "look", "help",
+    "find", "take", "feel", "tend", "seek", "adapt", "form", "new",
+    "high", "lot", "better", "overall", "sense", "part", "those",
+    "simply", "seen", "see", "seeing", "because", "toward", "people"
+}
 
 
 import numpy as np
 import pickle
 
 class TFIDFVectorizer:
-    def __init__(self):
-        self.vocabulary = {}
-        self.idf_values = {}
-        self.fitted = False
+    def __init__(self, stop_words=STOP_WORDS):
+        self.vocabulary  = {}
+        self.idf_values  = {}
+        self.fitted      = False
+        self.stop_words  = stop_words   # ← store it
 
     def fit(self, documents):
-        
         all_words = set()
         for doc in documents:
             for word in doc.split():
-                all_words.add(word)
-        
-        # assign each word a fixed dimension index
+                word = word.lower()                        # ← lowercase first
+                if word not in self.stop_words:
+                    all_words.add(word)
+
         self.vocabulary = {word: idx for idx, word in enumerate(sorted(all_words))}
-        
-        # compute IDF for each word......
+
         N = len(documents)
         for word in self.vocabulary:
-            containing = sum(1 for doc in documents if word in doc.split())
-            self.idf_values[word] = np.log(N / containing)
-        
+            containing = sum(1 for doc in documents if word in doc.lower().split())  # ← lowercase doc too
+            
+            if containing == 0:                            # ← safety net
+                self.idf_values[word] = 0.0
+            else:
+                self.idf_values[word] = np.log(N / containing)
+
         self.fitted = True
         return self
 
@@ -124,6 +92,7 @@ class TFIDFVectorizer:
             row = np.zeros(len(self.vocabulary))
             
             for word in words:
+                word = word.lower()                                # ← lowercase before lookup
                 if word not in self.vocabulary:
                     continue          # unknown word ko ignore, dimension doesn't exist
                 
