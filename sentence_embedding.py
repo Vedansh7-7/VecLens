@@ -66,14 +66,17 @@ def idf(word, docs):
     return idf_of_word
 
 def tfidf(word, doc, docs):
-    return tf(word, doc) * tf(word, docs)
+    return tf(word, doc) * idf(word, docs)
 
 matrix = []
 
 for trait in Traits:
+    # print(trait)
     row = [tfidf(word, trait, Traits) for word in vocab]
     matrix.append(row)
 
 
 matrix = np.array(matrix)
 print(matrix.shape)
+
+
