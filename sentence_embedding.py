@@ -75,5 +75,5 @@ for trait in Traits:
     matrix.append(row)
 
 
-matrix - np.array(matrix)
+matrix = np.array(matrix)
 print(matrix.shape)
