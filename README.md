@@ -6,7 +6,9 @@
 
 ## What it does
 
-VecLens takes a user's text description of their preferences and recommends the closest matching items from a catalog using vector similarity search. Currently built on TF-IDF embeddings with cosine similarity, designed to scale toward sentence-transformers and neural embeddings.
+VecLens takes a user's free-text description of their personality and maps it into a shared vector space alongside the Big Five personality traits — then ranks them by cosine similarity.
+
+Built entirely from scratch using only numpy (no sklearn for the core, no pre-trained models) to understand the mathematics of vector embeddings before abstracting them away. Served through a Streamlit web app with three tabs: recommendation results, per-token TF-IDF weight breakdown, and live PCA projections of both the catalog and vocabulary space with the user's position plotted in real time.
 
 ---
 
@@ -30,9 +32,10 @@ VecLens/
 │   ├── vocab_2d_space.png     # PCA projection of vocabulary words
 │   └── vocab_idf.png          # word rarity bar chart
 │
-├── embedding.py               # TFIDFVectorizer class (custom, built from scratch)
+├── embedding.py               # TFIDFVectorizer class (custom, numpy only)
 ├── building_embd.py           # fits vectorizer on catalog, saves matrix + vectorizer
-├── VecLens.py                 # user-facing recommendation script
+├── app.py                     # Streamlit web app (3 tabs)
+├── VecLens.py                 # CLI recommendation script
 ├── plot.py                    # vocabulary explorer + 2D PCA space plots
 ├── README.md
 └── requirements.txt
@@ -57,7 +60,7 @@ vectorizer.transform()      maps user input into same vector space
         ↓
 cosine similarity           scores every catalog item against user vector
         ↓
-ranked recommendations
+ranked recommendations + visualizations
 ```
 
 ---
@@ -83,22 +86,35 @@ pip install -r requirements.txt
 python building_embd.py
 ```
 
-Fits the vectorizer on your catalog and saves `tfidf_matrix.npy`, `vectorizer.pkl`, `personalities.pkl`.
+Fits the vectorizer on your catalog and saves `tfidf_matrix.npy`, `vectorizer.pkl`, `personalities.pkl` inside `data/`.
 
-**3. Get recommendations**
+**3. Run the web app**
+
+```bash
+streamlit run app.py
+```
+
+**4. Or use the CLI**
 
 ```bash
 python VecLens.py
 ```
 
-Enter a description of your preferences when prompted.
-
-**4. Visualize**
+**5. Standalone plots**
 
 ```bash
-python visualize.py    # recommendation scores, heatmap
-python plot.py         # vocabulary explorer, 2D word/title space
+python plot.py     # vocabulary explorer, 2D PCA space
 ```
+
+---
+
+## App tabs
+
+| Tab | What it shows |
+|---|---|
+| **Result** | Top matched personality + all scores as bars |
+| **Token Weights** | TF-IDF weight of each matched token, IDF rarity chart, unrecognised words |
+| **PCA Space** | Titles in 2D with your position as a star · Vocabulary scatter with your tokens highlighted in green |
 
 ---
 
@@ -118,6 +134,7 @@ No code changes needed.
 |---|---|
 | Vector math | `numpy` |
 | Embeddings | custom TF-IDF (`embedding.py`) |
+| Web app | `streamlit` |
 | Visualization | `matplotlib` |
 | Dimensionality reduction | `sklearn` PCA |
 | Serialization | `pickle` |
@@ -130,12 +147,13 @@ No code changes needed.
 - [x] Cosine similarity search
 - [x] Vocabulary + 2D PCA visualization
 - [x] File-based catalog (`.txt` per item)
+- [x] Streamlit web app with token weight + PCA tabs
 - [ ] Punctuation stripping + stop word cleanup
-- [ ] Weighted mean for user taste vector
+- [ ] Weighted mean for user taste vector (recency, ratings)
 - [ ] Sentence-transformers embeddings
 - [ ] Multi-domain support (media, careers, content)
 - [ ] FastAPI wrapper
-- [ ] Web UI
+- [ ] Knowledge graph layer for explainability
 
 ---
 
